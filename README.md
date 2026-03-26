@@ -6,11 +6,6 @@ with a real-time candlestick chart.
 
 ---
 
-## Screenshots
-
-![Trading Bot]("C:\Users\Hp\OneDrive\Pictures\Screenshots\Screenshot 2026-03-26 183125.png")
-
----
 
 ## Tech Stack
 
