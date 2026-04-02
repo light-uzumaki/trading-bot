@@ -1,6 +1,8 @@
+
+
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, field_validator
 from typing import Optional
 from bot.client import BinanceClient
 from bot.orders import place_order
@@ -20,25 +22,27 @@ class OrderRequest(BaseModel):
     price: Optional[float] = None
     stopPrice: Optional[float] = None
 
-    @validator("side")
+    @field_validator("side")
+    @classmethod
     def side_must_be_valid(cls, v):
         if v.upper() not in ["BUY", "SELL"]:
             raise ValueError("side must be BUY or SELL")
         return v.upper()
 
-    @validator("order_type")
+    @field_validator("order_type")
+    @classmethod
     def type_must_be_valid(cls, v):
         valid = ["MARKET", "LIMIT", "STOP", "STOP_MARKET"]
         if v.upper() not in valid:
             raise ValueError(f"order_type must be one of {valid}")
         return v.upper()
 
-    @validator("quantity")
+    @field_validator("quantity")
+    @classmethod
     def quantity_must_be_positive(cls, v):
         if v <= 0:
             raise ValueError("quantity must be positive")
         return v
-
 @app.get("/")
 def root():
     return {"status": "ok", "message": "Trading Bot API is running 🚀"}
