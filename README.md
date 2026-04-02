@@ -1,24 +1,41 @@
 # Trading Bot — Binance Futures Testnet
 
-A full-stack algorithmic trading application built with FastAPI (Python) and React.
-Places and manages futures orders on Binance Testnet via a live web interface
-with a real-time candlestick chart.
+A full-stack algorithmic trading application that places and manages futures orders on the Binance Testnet. Built with a FastAPI backend and a React frontend featuring a real-time candlestick chart rendered on HTML5 Canvas.
+
+> No real money is involved. This project runs entirely on Binance's free Futures Testnet.
 
 ---
 
+## Live Demo
+
+> Start the backend and frontend locally (see setup below), then visit `http://localhost:3000`
+
+---
+
+## Features
+
+- Place MARKET, LIMIT, STOP, and STOP_MARKET futures orders
+- Real-time candlestick chart with live price ticker from Binance Testnet
+- View open positions and wallet balances
+- Cancel open orders
+- Input validation with meaningful error messages
+- Interactive API docs via Swagger UI at `/docs`
+
+---
 
 ## Tech Stack
 
-| Layer | Technology |
-|---|---|
-| Frontend | React |
-| Backend | FastAPI (Python) |
-| Exchange | Binance Futures Testnet |
-| Chart | HTML5 Canvas (custom built) |
+| Layer     | Technology                        |
+|-----------|-----------------------------------|
+| Frontend  | React                             |
+| Backend   | FastAPI (Python)                  |
+| Exchange  | Binance Futures Testnet           |
+| Chart     | HTML5 Canvas (custom built)       |
 
 ---
 
 ## Project Structure
+
 ```
 trading-bot/
 ├── backend/
@@ -37,141 +54,117 @@ trading-bot/
 
 ---
 
-## Setup Steps
+## Getting Started
 
 ### Prerequisites
-- Python 3.9 or above
-- Node.js 16 or above
-- A Binance Testnet account and API keys
-  - Get them free at https://testnet.binancefuture.com
+
+- Python 3.9+
+- Node.js 16+
+- A free Binance Testnet account and API keys → [testnet.binancefuture.com](https://testnet.binancefuture.com)
 
 ---
 
-### 1. Clone the repository
-```
+### 1. Clone the repo
+
+```bash
 git clone https://github.com/light-uzumaki/trading-bot.git
 cd trading-bot
 ```
 
----
+### 2. Backend setup
 
-### 2. Backend Setup
-```
+```bash
 cd backend
 python -m venv .venv
-.venv\Scripts\activate
+.venv\Scripts\activate       # Windows
+# source .venv/bin/activate  # Mac/Linux
 pip install -r requirements.txt
 ```
 
-Create a `.env` file inside the `backend` folder:
+Create a `.env` file inside the `backend/` folder:
+
 ```
 BINANCE_API_KEY=your_api_key_here
 BINANCE_SECRET=your_secret_here
 ```
 
-Start the backend server:
-```
+Start the server:
+
+```bash
 uvicorn main:app --reload
 ```
 
-Backend runs at http://127.0.0.1:8000
-Interactive API docs at http://127.0.0.1:8000/docs
+Backend runs at `http://127.0.0.1:8000`  
+Swagger UI (interactive docs) at `http://127.0.0.1:8000/docs`
 
 ---
 
-### 3. Frontend Setup
+### 3. Frontend setup
 
 Open a second terminal:
-```
+
+```bash
 cd frontend
 npm install
 npm start
 ```
 
-Frontend runs at http://localhost:3000
+Frontend runs at `http://localhost:3000`
 
-> Both terminals must be running at the same time for the app to work.
-
----
-
-## How to Run Examples
-
-### Place a Market Order
-Go to http://localhost:3000
-- Symbol: BTCUSDT
-- Side: BUY
-- Order Type: MARKET
-- Quantity: 0.001
-- Click Execute Trade
-
-### Place a Limit Order
-- Symbol: BTCUSDT
-- Side: BUY
-- Order Type: LIMIT
-- Quantity: 0.001
-- Price: 60000
-- Click Execute Trade
-
-### Place a Stop Market Order
-- Symbol: BTCUSDT
-- Side: SELL
-- Order Type: STOP_MARKET
-- Quantity: 0.001
-- Stop Price: 58000
-- Click Execute Trade
-
-### Test API directly
-Once backend is running, open:
-```
-http://127.0.0.1:8000/docs
-```
-This opens Swagger UI where you can test all endpoints interactively.
+> Both terminals must be running simultaneously.
 
 ---
 
 ## API Endpoints
 
-| Method | Endpoint | Description |
-|---|---|---|
-| GET | `/` | Health check |
-| GET | `/ping` | Test Binance connection |
-| GET | `/account` | Wallet and margin balances |
-| GET | `/positions` | Open futures positions |
-| GET | `/price/{symbol}` | Live price for a symbol |
-| POST | `/order` | Place a new order |
-| GET | `/orders/{symbol}` | Get open orders for a symbol |
-| DELETE | `/order/{symbol}/{id}` | Cancel an order |
+| Method   | Endpoint                    | Description                        |
+|----------|-----------------------------|------------------------------------|
+| GET      | `/`                         | Health check                       |
+| GET      | `/ping`                     | Test Binance connection            |
+| GET      | `/account`                  | Wallet and margin balances         |
+| GET      | `/positions`                | Open futures positions             |
+| GET      | `/price/{symbol}`           | Live price for a symbol            |
+| POST     | `/order`                    | Place a new order                  |
+| GET      | `/orders/{symbol}`          | Get open orders for a symbol       |
+| DELETE   | `/order/{symbol}/{id}`      | Cancel an order                    |
 
 ---
 
-## Assumptions
+## Example Orders
 
-1. **Binance Testnet only** — this project connects to the Binance Futures
-   Testnet, not the live exchange. No real money is involved.
+**Market order**
+```json
+{ "symbol": "BTCUSDT", "side": "BUY", "order_type": "MARKET", "quantity": 0.001 }
+```
 
-2. **Quantity precision** — Binance requires BTC quantity to be rounded to
-   3 decimal places. Minimum quantity is 0.001 BTC.
+**Limit order**
+```json
+{ "symbol": "BTCUSDT", "side": "BUY", "order_type": "LIMIT", "quantity": 0.001, "price": 60000 }
+```
 
-3. **Minimum order value** — For LIMIT orders, the total order value
-   (quantity x price) must be at least $20 as required by Binance.
+**Stop market order**
+```json
+{ "symbol": "BTCUSDT", "side": "SELL", "order_type": "STOP_MARKET", "quantity": 0.001, "stopPrice": 58000 }
+```
 
-4. **API keys in .env** — API keys must be stored in a `.env` file and are
-   never committed to GitHub.
+You can also test all endpoints interactively through Swagger UI at `http://127.0.0.1:8000/docs`.
 
-5. **CORS is open** — The backend allows all origins (`*`) for development
-   purposes. This should be restricted in production.
+---
 
-6. **Chart is simulated** — The candlestick chart generates realistic price
-   movement locally. It does not pull live OHLC candle history from Binance.
-   The live price ticker however does fetch real testnet prices.
+## Notes
 
-7. **Python version** — Developed and tested on Python 3.11 on Windows.
+- **Testnet only** — connects to Binance Futures Testnet, not the live exchange
+- **Quantity precision** — BTC quantity must be rounded to 3 decimal places (minimum 0.001 BTC)
+- **Minimum order value** — LIMIT orders must have a total value of at least $20
+- **API keys** — stored in `.env` and never committed to GitHub
+- **CORS** — currently open (`*`) for local development; should be restricted in production
+- **Chart** — candlestick chart uses simulated price movement locally; live price ticker pulls real testnet data
 
 ---
 
 ## Dependencies
 
-### Backend
+**Backend**
 ```
 fastapi
 uvicorn
@@ -180,7 +173,7 @@ pydantic
 python-dotenv
 ```
 
-### Frontend
+**Frontend**
 ```
 react
 ```
@@ -189,4 +182,4 @@ react
 
 ## Author
 
-GitHub: https://github.com/light-uzumaki
+GitHub: [@light-uzumaki](https://github.com/light-uzumaki)
